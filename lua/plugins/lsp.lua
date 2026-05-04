@@ -1,29 +1,30 @@
 return {
   'VonHeikemen/lsp-zero.nvim',
-  dependencies  = {
+  dependencies = {
     -- LSP Support
-    {'neovim/nvim-lspconfig'},
-    {'williamboman/mason.nvim'},
-    {'williamboman/mason-lspconfig.nvim'},
+    { 'neovim/nvim-lspconfig' },
+    { 'williamboman/mason.nvim' },
+    { 'williamboman/mason-lspconfig.nvim' },
 
     -- Autocompletion
-    {'hrsh7th/nvim-cmp'},
-    {'hrsh7th/cmp-buffer'},
-    {'hrsh7th/cmp-path'},
-    {'saadparwaiz1/cmp_luasnip'},
-    {'hrsh7th/cmp-nvim-lsp'},
-    {'hrsh7th/cmp-nvim-lua'},
+    { 'hrsh7th/nvim-cmp' },
+    { 'hrsh7th/cmp-buffer' },
+    { 'hrsh7th/cmp-path' },
+    { 'saadparwaiz1/cmp_luasnip' },
+    { 'hrsh7th/cmp-nvim-lsp' },
+    { 'hrsh7th/cmp-nvim-lua' },
 
-    -- Snippets
-    {'L3MON4D3/LuaSnip'},
-    {'rafamadriz/friendly-snippets'},
+    -- Snippets (use LuaSnip only)
+    { 'L3MON4D3/LuaSnip' },
+    { 'rafamadriz/friendly-snippets' },
+
+    -- Misc LSP-related plugins
     'nvim-lua/lsp-status.nvim',
     'RishabhRD/popfix',
     'RishabhRD/nvim-lsputils',
     'nvimdev/lspsaga.nvim',
     'kosayoda/nvim-lightbulb',
     'roobert/action-hints.nvim',
-    'saadparwaiz1/cmp_luasnip',
     'onsails/lspkind.nvim',
     'ojroques/nvim-lspfuzzy',
     'gfanto/fzf-lsp.nvim',
@@ -33,160 +34,137 @@ return {
     'ray-x/navigator.lua',
     'simrat39/symbols-outline.nvim',
     'stevearc/aerial.nvim',
-    "neovim/nvim-lspconfig",
-    "SmiteshP/nvim-navic",
-    "MunifTanjim/nui.nvim",
-    "numToStr/Comment.nvim",
-    "nvim-telescope/telescope.nvim" ,
-    "SmiteshP/nvim-navbuddy",
-    "aznhe21/actions-preview.nvim",
+    'SmiteshP/nvim-navic',
+    'MunifTanjim/nui.nvim',
+    'numToStr/Comment.nvim',
+    'SmiteshP/nvim-navbuddy',
+    'aznhe21/actions-preview.nvim',
     'mfussenegger/nvim-lint',
-    "j-hui/fidget.nvim",
+    'j-hui/fidget.nvim',
     'dnlhc/glance.nvim',
     'linrongbin16/lsp-progress.nvim',
-    "jinzhongjia/LspUI.nvim",
-    "hinell/lsp-timeout.nvim",
-    "williamboman/mason.nvim",
-    "folke/trouble.nvim",
-    'folke/lsp-colors.nvim',
-    'neovim/nvim-lspconfig',
-    'hrsh7th/cmp-nvim-lsp',
-    'hrsh7th/cmp-buffer',
-    'hrsh7th/cmp-path',
+    'jinzhongjia/LspUI.nvim',
+    'hinell/lsp-timeout.nvim',
     'hrsh7th/cmp-cmdline',
-    'hrsh7th/nvim-cmp',
-    'hrsh7th/cmp-vsnip',
-    'hrsh7th/vim-vsnip',
-    'SirVer/ultisnips',
-    'quangnguyen30192/cmp-nvim-ultisnips',
-    'dcampos/nvim-snippy',
-    'dcampos/cmp-snippy',
-    "zbirenbaum/copilot.lua",
-    "zbirenbaum/copilot-cmp",
+    'zbirenbaum/copilot.lua',
+    'zbirenbaum/copilot-cmp',
     'AndreM222/copilot-lualine',
-    { "rafamadriz/friendly-snippets" },
-    'dcampos/cmp-snippy',
     'windwp/nvim-autopairs',
-    'monaqa/dial.nvim',
     'windwp/nvim-ts-autotag',
     'willothy/moveline.nvim',
-    'numToStr/Comment.nvim',
     'lukas-reineke/lsp-format.nvim',
-    "https://git.sr.ht/~nedia/auto-format.nvim",
-    "https://git.sr.ht/~nedia/auto-save.nvim",
+    'https://git.sr.ht/~nedia/auto-format.nvim',
+    'https://git.sr.ht/~nedia/auto-save.nvim',
     'stevearc/conform.nvim',
     'nvim-treesitter/nvim-treesitter',
-      "nvim-treesitter/nvim-treesitter-textobjects"
+    'nvim-treesitter/nvim-treesitter-textobjects'
   },
-  build = {"make install_jsregexp", "make", "TSUpdate"},
+  build = { "make install_jsregexp", "make", "TSUpdate" },
   config = function()
+    --lsp-zero
+    local lsp_zero = require('lsp-zero')
 
+    lsp_zero.on_attach(function(client, bufnr)
+      -- see :help lsp-zero-keybindings
+      -- to learn the available actions
+      lsp_zero.default_keymaps({ buffer = bufnr })
+    end)
 
+    -- to learn how to use mason.nvim
+    -- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guide/integrate-with-mason-nvim.md
+    require('mason').setup({})
+    require('mason-lspconfig').setup({
+      ensure_installed = {},
+      handlers = {
+        function(server_name)
+          require('lspconfig')[server_name].setup({})
+        end,
+      },
+    })
 
---lsp-zero
-local lsp_zero = require('lsp-zero')
+    local lsp_zero = require('lsp-zero')
 
-lsp_zero.on_attach(function(client, bufnr)
-  -- see :help lsp-zero-keybindings
-  -- to learn the available actions
-  lsp_zero.default_keymaps({buffer = bufnr})
-end)
+    lsp_zero.on_attach(function(client, bufnr)
+      lsp_zero.default_keymaps({ buffer = bufnr })
+    end)
 
--- to learn how to use mason.nvim
--- read this: https://github.com/VonHeikemen/lsp-zero.nvim/blob/v3.x/doc/md/guide/integrate-with-mason-nvim.md
-require('mason').setup({})
-require('mason-lspconfig').setup({
-  ensure_installed = {},
-  handlers = {
-    function(server_name)
-      require('lspconfig')[server_name].setup({})
-    end,
-  },
-})
-
-local lsp_zero = require('lsp-zero')
-
-lsp_zero.on_attach(function(client, bufnr)
-  lsp_zero.default_keymaps({buffer = bufnr})
-end)
-
--- don't add this function in the `on_attach` callback.
--- `format_on_save` should run only once, before the language servers are active.
-lsp_zero.format_on_save({
-  format_opts = {
-    async = false,
-    timeout_ms = 10000,
-  },
-  servers = {
-    ['tsserver'] = {'javascript', 'typescript'},
-    ['rust_analyzer'] = {'rust'},
-  }
-})
-vim.g.lsp_zero_extend_cmp = 0
-vim.g.lsp_zero_extend_lspconfig = 0
-vim.g.lsp_zero_extend_capabilities = 0
-vim.g.lsp_zero_ui_float_border = 'rounded'
-vim.g.lsp_zero_ui_signcolumn = 0
-vim.g.lsp_zero_api_warnings = 0
-vim.b.lsp_zero_enable_autoformat = 0
-local lsp_zero = require('lsp-zero')
-
-lsp_zero.set_server_config({
-  single_file_support = false,
-  capabilities = {
-    textDocument = {
-      foldingRange = {
-        dynamicRegistration = false,
-        lineFoldingOnly = true
+    -- don't add this function in the `on_attach` callback.
+    -- `format_on_save` should run only once, before the language servers are active.
+    lsp_zero.format_on_save({
+      format_opts = {
+        async = false,
+        timeout_ms = 10000,
+      },
+      servers = {
+        ['tsserver'] = { 'javascript', 'typescript' },
+        ['rust_analyzer'] = { 'rust' },
       }
-    }
-  }
-})
+    })
+    vim.g.lsp_zero_extend_cmp = 0
+    vim.g.lsp_zero_extend_lspconfig = 0
+    vim.g.lsp_zero_extend_capabilities = 0
+    vim.g.lsp_zero_ui_float_border = 'rounded'
+    vim.g.lsp_zero_ui_signcolumn = 0
+    vim.g.lsp_zero_api_warnings = 0
+    vim.b.lsp_zero_enable_autoformat = 0
+    local lsp_zero = require('lsp-zero')
 
-lsp_zero.on_attach(function(client, bufnr)
-  lsp_zero.default_keymaps({buffer = bufnr})
-  lsp_zero.buffer_autoformat()
-end)
-require('lspconfig').tsserver.setup({
-  on_attach = function(client, bufnr)
-    lsp_zero.async_autoformat(client, bufnr)
-  end
-})
-lsp_zero.set_sign_icons({
-  error = '✘',
-  warn = '▲',
-  hint = '⚑',
-  info = '»'
-})
-lsp_zero.on_attach(function(client, bufnr)
-  lsp_zero.highlight_symbol(client, bufnr)
-end)
-require('lsp-zero').extend_cmp()
-local cmp_action = require('lsp-zero').cmp_action()
-local cmp = require('cmp')
-cmp.setup({
-  mapping = cmp.mapping.preset.insert({
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<C-f>'] = cmp_action.luasnip_jump_forward(),
-    ['<C-b>'] = cmp_action.luasnip_jump_backward(),
-  }),
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
-})
-lsp_zero.omnifunc.setup({
-  tabcomplete = true,
-  use_fallback = true,
-  update_on_delete = true,
-})
-lsp_zero.omnifunc.setup({
-  autocomplete = true,
-  use_fallback = true,
-  update_on_delete = true,
-  trigger = '<C-Space>',
-})
+    lsp_zero.set_server_config({
+      single_file_support = false,
+      capabilities = {
+        textDocument = {
+          foldingRange = {
+            dynamicRegistration = false,
+            lineFoldingOnly = true
+          }
+        }
+      }
+    })
+
+    lsp_zero.on_attach(function(client, bufnr)
+      lsp_zero.default_keymaps({ buffer = bufnr })
+      lsp_zero.buffer_autoformat()
+    end)
+    require('lspconfig').tsserver.setup({
+      on_attach = function(client, bufnr)
+        lsp_zero.async_autoformat(client, bufnr)
+      end
+    })
+    lsp_zero.set_sign_icons({
+      error = '✘',
+      warn = '▲',
+      hint = '⚑',
+      info = '»'
+    })
+    lsp_zero.on_attach(function(client, bufnr)
+      lsp_zero.highlight_symbol(client, bufnr)
+    end)
+    require('lsp-zero').extend_cmp()
+    local cmp_action = require('lsp-zero').cmp_action()
+    local cmp = require('cmp')
+    cmp.setup({
+      mapping = cmp.mapping.preset.insert({
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<C-f>'] = cmp_action.luasnip_jump_forward(),
+        ['<C-b>'] = cmp_action.luasnip_jump_backward(),
+      }),
+      snippet = {
+        expand = function(args)
+          require('luasnip').lsp_expand(args.body)
+        end,
+      },
+    })
+    lsp_zero.omnifunc.setup({
+      tabcomplete = true,
+      use_fallback = true,
+      update_on_delete = true,
+    })
+    lsp_zero.omnifunc.setup({
+      autocomplete = true,
+      use_fallback = true,
+      update_on_delete = true,
+      trigger = '<C-Space>',
+    })
 
 
 
@@ -194,7 +172,7 @@ lsp_zero.omnifunc.setup({
 
 
     --lspconfig
-    local on_windows = vim.loop.os_uname().version:match 'Windows'
+    local on_windows = jit.os:lower():match('windows') and true or false
 
     local function join_paths(...)
       local path_sep = on_windows and '\\' or '/'
@@ -204,7 +182,7 @@ lsp_zero.omnifunc.setup({
 
     vim.cmd [[set runtimepath=$VIMRUNTIME]]
 
-    local temp_dir = vim.loop.os_getenv 'TEMP' or '/tmp'
+    local temp_dir = os.getenv('TEMP') or '/tmp'
 
     vim.cmd('set packpath=' .. join_paths(temp_dir, 'nvim', 'site'))
 
@@ -219,11 +197,7 @@ lsp_zero.omnifunc.setup({
     require('vim.lsp.log').set_format_func(vim.inspect)
     local nvim_lsp = require 'lspconfig'
     local on_attach = function(_, bufnr)
-      local function buf_set_option(...)
-        vim.api.nvim_buf_set_option(bufnr, ...)
-      end
-
-      buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+      vim.bo[bufnr].omnifunc = 'v:lua.vim.lsp.omnifunc'
 
       -- Mappings.
       local opts = { buffer = bufnr, noremap = true, silent = true }
@@ -286,8 +260,8 @@ lsp_zero.omnifunc.setup({
         end,
       },
       window = {
-      -- completion = cmp.config.window.bordered(),
-      -- documentation = cmp.config.window.bordered(),
+        -- completion = cmp.config.window.bordered(),
+        -- documentation = cmp.config.window.bordered(),
       },
       mapping = cmp.mapping.preset.insert({
         ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -301,7 +275,7 @@ lsp_zero.omnifunc.setup({
         -- { name = 'vsnip' }, -- For vsnip users.
         { name = 'luasnip' }, -- For luasnip users.
         -- { name = 'ultisnips' }, -- For ultisnips users.
-        { name = 'snippy' }, -- For snippy users.
+        { name = 'snippy' },  -- For snippy users.
       }, {
         { name = 'buffer' },
       })
@@ -316,7 +290,7 @@ lsp_zero.omnifunc.setup({
       { name = 'buffer' },
     })
  })
- require("cmp_git").setup() ]]-- 
+ require("cmp_git").setup() ]] --
 
     -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
     cmp.setup.cmdline({ '/', '?' }, {
@@ -376,7 +350,7 @@ lsp_zero.omnifunc.setup({
 
     lspconfig.pyls_ms.setup({
       handlers = lsp_status.extensions.pyls_ms.setup(),
-      settings = { python = { workspaceSymbols = { enabled = true }}},
+      settings = { python = { workspaceSymbols = { enabled = true } } },
       on_attach = lsp_status.on_attach,
       capabilities = lsp_status.capabilities
     })
@@ -441,12 +415,12 @@ lsp_zero.omnifunc.setup({
       },
     })
 
-    vim.api.nvim_set_hl(0, "CmpItemKindCopilot", {fg ="#6CC644"})
+    vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
 
     local has_words_before = function()
-      if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+      if vim.bo[0].buftype == "prompt" then return false end
       local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-      return col ~= 0 and vim.api.nvim_buf_get_text(0, line-1, 0, line-1, col, {})[1]:match("^%s*$") == nil
+      return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
     end
     cmp.setup({
       mapping = {
@@ -466,14 +440,14 @@ lsp_zero.omnifunc.setup({
 
     --lsputils
     if vim.fn.has('nvim-0.10.0') == 1 then
-      vim.lsp.handlers['textDocument/codeAction'] = require'lsputil.codeAction'.code_action_handler
-      vim.lsp.handlers['textDocument/references'] = require'lsputil.locations'.references_handler
-      vim.lsp.handlers['textDocument/definition'] = require'lsputil.locations'.definition_handler
-      vim.lsp.handlers['textDocument/declaration'] = require'lsputil.locations'.declaration_handler
-      vim.lsp.handlers['textDocument/typeDefinition'] = require'lsputil.locations'.typeDefinition_handler
-      vim.lsp.handlers['textDocument/implementation'] = require'lsputil.locations'.implementation_handler
-      vim.lsp.handlers['textDocument/documentSymbol'] = require'lsputil.symbols'.document_handler
-      vim.lsp.handlers['workspace/symbol'] = require'lsputil.symbols'.workspace_handler
+      vim.lsp.handlers['textDocument/codeAction'] = require 'lsputil.codeAction'.code_action_handler
+      vim.lsp.handlers['textDocument/references'] = require 'lsputil.locations'.references_handler
+      vim.lsp.handlers['textDocument/definition'] = require 'lsputil.locations'.definition_handler
+      vim.lsp.handlers['textDocument/declaration'] = require 'lsputil.locations'.declaration_handler
+      vim.lsp.handlers['textDocument/typeDefinition'] = require 'lsputil.locations'.typeDefinition_handler
+      vim.lsp.handlers['textDocument/implementation'] = require 'lsputil.locations'.implementation_handler
+      vim.lsp.handlers['textDocument/documentSymbol'] = require 'lsputil.symbols'.document_handler
+      vim.lsp.handlers['workspace/symbol'] = require 'lsputil.symbols'.workspace_handler
     else
       local bufnr = vim.api.nvim_buf_get_number(0)
 
@@ -549,7 +523,7 @@ lsp_zero.omnifunc.setup({
     --lspsaga
     local saga = require 'lspsaga'
 
-    saga.init_lsp_saga {
+    saga.setup {
       error_sign = '',
       warn_sign = '',
       hint_sign = '',
@@ -766,15 +740,15 @@ lsp_zero.omnifunc.setup({
       formatting = {
         format = lspkind.cmp_format({
           mode = 'symbol', -- show only symbol annotations
-          maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+          maxwidth = 50,   -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
           -- can also be a function to dynamically calculate max width such as
           -- maxwidth = function() return math.floor(0.45 * vim.o.columns) end,
-          ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+          ellipsis_char = '...',    -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
           show_labelDetails = true, -- show labelDetails in menu. Disabled by default
 
           -- The function below will be called before any actual modifications from lspkind
           -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
-          before = function (entry, vim_item)
+          before = function(entry, vim_item)
             return vim_item
           end
         })
@@ -787,65 +761,65 @@ lsp_zero.omnifunc.setup({
 
     --lspfuzzy
     require('lspfuzzy').setup {
-      methods = 'all',         -- either 'all' or a list of LSP methods (see below)
-      jump_one = true,         -- jump immediately if there is only one location
-      save_last = false,       -- save last location results for the :LspFuzzyLast command
-      callback = nil,          -- callback called after jumping to a location
-      fzf_preview = {          -- arguments to the FZF '--preview-window' option
-        'right:+{2}-/2'          -- preview on the right and centered on entry
+      methods = 'all',            -- either 'all' or a list of LSP methods (see below)
+      jump_one = true,            -- jump immediately if there is only one location
+      save_last = false,          -- save last location results for the :LspFuzzyLast command
+      callback = nil,             -- callback called after jumping to a location
+      fzf_preview = {             -- arguments to the FZF '--preview-window' option
+        'right:+{2}-/2'           -- preview on the right and centered on entry
       },
-      fzf_action = {               -- FZF actions
-        ['ctrl-t'] = 'tab split',  -- go to location in a new tab
-        ['ctrl-v'] = 'vsplit',     -- go to location in a vertical split
-        ['ctrl-x'] = 'split',      -- go to location in a horizontal split
+      fzf_action = {              -- FZF actions
+        ['ctrl-t'] = 'tab split', -- go to location in a new tab
+        ['ctrl-v'] = 'vsplit',    -- go to location in a vertical split
+        ['ctrl-x'] = 'split',     -- go to location in a horizontal split
       },
-      fzf_modifier = ':~:.',   -- format FZF entries, see |filename-modifiers|
-      fzf_trim = true,         -- trim FZF entries
+      fzf_modifier = ':~:.',      -- format FZF entries, see |filename-modifiers|
+      fzf_trim = true,            -- trim FZF entries
     }
 
-    vim.lsp.handlers["textDocument/codeAction"] = require'fzf_lsp'.code_action_handler
-    vim.lsp.handlers["textDocument/definition"] = require'fzf_lsp'.definition_handler
-    vim.lsp.handlers["textDocument/declaration"] = require'fzf_lsp'.declaration_handler
-    vim.lsp.handlers["textDocument/typeDefinition"] = require'fzf_lsp'.type_definition_handler
-    vim.lsp.handlers["textDocument/implementation"] = require'fzf_lsp'.implementation_handler
-    vim.lsp.handlers["textDocument/references"] = require'fzf_lsp'.references_handler
-    vim.lsp.handlers["textDocument/documentSymbol"] = require'fzf_lsp'.document_symbol_handler
-    vim.lsp.handlers["workspace/symbol"] = require'fzf_lsp'.workspace_symbol_handler
-    vim.lsp.handlers["callHierarchy/incomingCalls"] = require'fzf_lsp'.incoming_calls_handler
-    vim.lsp.handlers["callHierarchy/outgoingCalls"] = require'fzf_lsp'.outgoing_calls_handler
+    vim.lsp.handlers["textDocument/codeAction"] = require 'fzf_lsp'.code_action_handler
+    vim.lsp.handlers["textDocument/definition"] = require 'fzf_lsp'.definition_handler
+    vim.lsp.handlers["textDocument/declaration"] = require 'fzf_lsp'.declaration_handler
+    vim.lsp.handlers["textDocument/typeDefinition"] = require 'fzf_lsp'.type_definition_handler
+    vim.lsp.handlers["textDocument/implementation"] = require 'fzf_lsp'.implementation_handler
+    vim.lsp.handlers["textDocument/references"] = require 'fzf_lsp'.references_handler
+    vim.lsp.handlers["textDocument/documentSymbol"] = require 'fzf_lsp'.document_symbol_handler
+    vim.lsp.handlers["workspace/symbol"] = require 'fzf_lsp'.workspace_symbol_handler
+    vim.lsp.handlers["callHierarchy/incomingCalls"] = require 'fzf_lsp'.incoming_calls_handler
+    vim.lsp.handlers["callHierarchy/outgoingCalls"] = require 'fzf_lsp'.outgoing_calls_handler
 
 
 
     --lsp-signature
-    local  cfg = {
-      debug = false, -- set to true to enable debug logging
+    local cfg = {
+      debug = false,                                              -- set to true to enable debug logging
       log_path = vim.fn.stdpath("cache") .. "/lsp_signature.log", -- log dir when debug is on
       -- default is  ~/.cache/nvim/lsp_signature.log
-      verbose = false, -- show debug line number
+      verbose = false,                                            -- show debug line number
 
-      bind = true, -- This is mandatory, otherwise border config won't get registered.
+      bind = true,                                                -- This is mandatory, otherwise border config won't get registered.
       -- If you want to hook lspsaga or other signature handler, pls set to false
-      doc_lines = 10, -- will show two lines of comment/doc(if there are more than two lines in doc, will be truncated);
+      doc_lines = 10,                                             -- will show two lines of comment/doc(if there are more than two lines in doc, will be truncated);
       -- set to 0 if you DO NOT want any API comments be shown
       -- This setting only take effect in insert mode, it does not affect signature help in normal
       -- mode, 10 by default
 
-      max_height = 12, -- max height of signature floating_window
-      max_width = 80, -- max_width of signature floating_window, line will be wrapped if exceed max_width
+      max_height = 12,                       -- max height of signature floating_window
+      max_width = 80,                        -- max_width of signature floating_window, line will be wrapped if exceed max_width
       -- the value need >= 40
-      wrap = true, -- allow doc/signature text wrap inside floating_window, useful if your lsp return doc/sig is too long
-      floating_window = true, -- show hint in a floating window, set to false for virtual text only mode
+      wrap = true,                           -- allow doc/signature text wrap inside floating_window, useful if your lsp return doc/sig is too long
+      floating_window = true,                -- show hint in a floating window, set to false for virtual text only mode
 
       floating_window_above_cur_line = true, -- try to place the floating above the current line when possible Note:
       -- will set to true when fully tested, set to false will use whichever side has more space
       -- this setting will be helpful if you do not want the PUM and floating win overlap
 
-      floating_window_off_x = 5, -- adjust float windows x position.
+      floating_window_off_x = 5,                         -- adjust float windows x position.
       -- can be either a number or function
-      floating_window_off_y = function() -- adjust float windows y position. e.g. set to -2 can make floating window move up 2 lines
+      floating_window_off_y = function()                 -- adjust float windows y position. e.g. set to -2 can make floating window move up 2 lines
         local linenr = vim.api.nvim_win_get_cursor(0)[1] -- buf line number
         local pumheight = vim.o.pumheight
-        local winline = vim.fn.winline() -- line number in the window
+        local winline = vim.fn.winline()                 -- line number in the window
         local winheight = vim.fn.winheight(0)
 
         -- window top
@@ -861,50 +835,50 @@ lsp_zero.omnifunc.setup({
       end, -- adjust float windows y position. e.g -2 move window up 2 lines; 2 move down 2 lines
       -- can be either number or function, see examples
       close_timeout = 4000, -- close floating window after ms when laster parameter is entered
-      fix_pos = false,  -- set to true, the floating window will not auto-close until finish all parameters
+      fix_pos = false, -- set to true, the floating window will not auto-close until finish all parameters
       hint_enable = true, -- virtual hint enable
-      hint_prefix = "🐼 ",  -- Panda for parameter, NOTE: for the terminal not support emoji, might crash
+      hint_prefix = "🐼 ", -- Panda for parameter, NOTE: for the terminal not support emoji, might crash
       hint_scheme = "String",
-      hint_inline = function() return false end,  -- should the hint be inline(nvim 0.10 only)?  default false
+      hint_inline = function() return false end, -- should the hint be inline(nvim 0.10 only)?  default false
       -- return true | 'inline' to show hint inline, return 'eol' to show hint at end of line, return false to disable
       -- return 'right_align' to display hint right aligned in the current line
       hi_parameter = "LspSignatureActiveParameter", -- how your parameter will be highlight
       handler_opts = {
-        border = "rounded"   -- double, rounded, single, shadow, none, or a table of borders
+        border = "rounded"                          -- double, rounded, single, shadow, none, or a table of borders
       },
 
-      always_trigger = false, -- sometime show signature on new line or in middle of parameter can be confusing, set it to false for #58
+      always_trigger = false,                   -- sometime show signature on new line or in middle of parameter can be confusing, set it to false for #58
 
-      auto_close_after = nil, -- autoclose signature float win after x sec, disabled if nil.
-      extra_trigger_chars = {}, -- Array of extra characters that will trigger signature completion, e.g., {"(", ","}
-      zindex = 200, -- by default it will be on top of all floating windows, set to <= 50 send it to bottom
+      auto_close_after = nil,                   -- autoclose signature float win after x sec, disabled if nil.
+      extra_trigger_chars = {},                 -- Array of extra characters that will trigger signature completion, e.g., {"(", ","}
+      zindex = 200,                             -- by default it will be on top of all floating windows, set to <= 50 send it to bottom
 
-      padding = '', -- character to pad on left and right of signature can be ' ', or '|'  etc
+      padding = '',                             -- character to pad on left and right of signature can be ' ', or '|'  etc
 
-      transparency = nil, -- disabled by default, allow floating win transparent value 1~100
-      shadow_blend = 36, -- if you using shadow as border use this set the opacity
-      shadow_guibg = 'Black', -- if you using shadow as border use this set the color e.g. 'Green' or '#121315'
-      timer_interval = 200, -- default timer check interval set to lower value if you want to reduce latency
-      toggle_key = nil, -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
+      transparency = nil,                       -- disabled by default, allow floating win transparent value 1~100
+      shadow_blend = 36,                        -- if you using shadow as border use this set the opacity
+      shadow_guibg = 'Black',                   -- if you using shadow as border use this set the color e.g. 'Green' or '#121315'
+      timer_interval = 200,                     -- default timer check interval set to lower value if you want to reduce latency
+      toggle_key = nil,                         -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
       toggle_key_flip_floatwin_setting = false, -- true: toggle floating_windows: true|false setting after toggle key pressed
       -- false: floating_windows setup will not change, toggle_key will pop up signature helper, but signature
       -- may not popup when typing depends on floating_window setting
 
       select_signature_key = nil, -- cycle to next signature, e.g. '<M-n>' function overloading
-      move_cursor_key = nil, -- imap, use nvim_set_current_win to move cursor between current win and floating window
+      move_cursor_key = nil,      -- imap, use nvim_set_current_win to move cursor between current win and floating window
       -- e.g. move_cursor_key = '<M-p>',
       -- once moved to floating window, you can use <M-d>, <M-u> to move cursor up and down
-      keymaps = {}  -- relate to move_cursor_key; the keymaps inside floating window
-    -- e.g. keymaps = { 'j', '<C-o>j' } this map j to <C-o>j in floating window
-    -- <M-d> and <M-u> are default keymaps to move cursor up and down
+      keymaps = {} -- relate to move_cursor_key; the keymaps inside floating window
+      -- e.g. keymaps = { 'j', '<C-o>j' } this map j to <C-o>j in floating window
+      -- <M-d> and <M-u> are default keymaps to move cursor up and down
     }
 
     -- recommended:
-    require'lsp_signature'.setup(cfg) -- no need to specify bufnr if you don't use toggle_key
+    require 'lsp_signature'.setup(cfg) -- no need to specify bufnr if you don't use toggle_key
 
     -- You can also do this inside lsp on_attach
     -- note: on_attach deprecated
-    require'lsp_signature'.on_attach(cfg, bufnr) -- no need to specify bufnr if you don't use toggle_key
+    require 'lsp_signature'.on_attach(cfg, bufnr) -- no need to specify bufnr if you don't use toggle_key
     require("lsp_signature").status_line(max_width)
 
 
@@ -944,32 +918,38 @@ lsp_zero.omnifunc.setup({
 
     --goto-preview
     require('goto-preview').setup {
-      width = 120; -- Width of the floating window
-      height = 15; -- Height of the floating window
-      border = {"↖", "─" ,"┐", "│", "┘", "─", "└", "│"}; -- Border characters of the floating window
-      default_mappings = false; -- Bind default mappings
-      debug = false; -- Print debug information
-      opacity = nil; -- 0-100 opacity level of the floating window where 100 is fully transparent.
-      resizing_mappings = false; -- Binds arrow keys to resizing the floating window.
-      post_open_hook = nil; -- A function taking two arguments, a buffer and a window to be ran as a hook.
-      post_close_hook = nil; -- A function taking two arguments, a buffer and a window to be ran as a hook.
+      width = 120, -- Width of the floating window
+      height = 15, -- Height of the floating window
+      border = { "↖", "─", "┐", "│", "┘", "─", "└", "│" }, -- Border characters of the floating window
+      default_mappings = false, -- Bind default mappings
+      debug = false, -- Print debug information
+      opacity = nil, -- 0-100 opacity level of the floating window where 100 is fully transparent.
+      resizing_mappings = false, -- Binds arrow keys to resizing the floating window.
+      post_open_hook = nil, -- A function taking two arguments, a buffer and a window to be ran as a hook.
+      post_close_hook = nil, -- A function taking two arguments, a buffer and a window to be ran as a hook.
       references = { -- Configure the telescope UI for slowing the references cycling window.
         telescope = require("telescope.themes").get_dropdown({ hide_preview = false })
-      };
+      },
       -- These two configs can also be passed down to the goto-preview definition and implementation calls for one off "peak" functionality.
-      focus_on_open = true; -- Focus the floating window when opening it.
-      dismiss_on_move = false; -- Dismiss the floating window when moving the cursor.
-      force_close = true, -- passed into vim.api.nvim_win_close's second argument. See :h nvim_win_close
-      bufhidden = "wipe", -- the bufhidden option to set on the floating window. See :h bufhidden
-      stack_floating_preview_windows = true, -- Whether to nest floating windows
+      focus_on_open = true,                                        -- Focus the floating window when opening it.
+      dismiss_on_move = false,                                     -- Dismiss the floating window when moving the cursor.
+      force_close = true,                                          -- passed into vim.api.nvim_win_close's second argument. See :h nvim_win_close
+      bufhidden = "wipe",                                          -- the bufhidden option to set on the floating window. See :h bufhidden
+      stack_floating_preview_windows = true,                       -- Whether to nest floating windows
       preview_window_title = { enable = true, position = "left" }, -- Whether to set the preview window title as the filename
     }
-    vim.api.nvim_set_keymap('n', 'gpd', '<cmd>lua require("goto-preview").goto_preview_definition()<CR>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('n', 'gpt', '<cmd>lua require("goto-preview").goto_preview_type_definition()<CR>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('n', 'gpi', '<cmd>lua require("goto-preview").goto_preview_implementation()<CR>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('n', 'gpD', '<cmd>lua require("goto-preview").goto_preview_declaration()<CR>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('n', 'gP', '<cmd>lua require("goto-preview").close_all_win()<CR>', { noremap = true, silent = true })
-    vim.api.nvim_set_keymap('n', 'gpr', '<cmd>lua require("goto-preview").goto_preview_references()<CR>', { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('n', 'gpd', '<cmd>lua require("goto-preview").goto_preview_definition()<CR>',
+      { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('n', 'gpt', '<cmd>lua require("goto-preview").goto_preview_type_definition()<CR>',
+      { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('n', 'gpi', '<cmd>lua require("goto-preview").goto_preview_implementation()<CR>',
+      { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('n', 'gpD', '<cmd>lua require("goto-preview").goto_preview_declaration()<CR>',
+      { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('n', 'gP', '<cmd>lua require("goto-preview").close_all_win()<CR>',
+      { noremap = true, silent = true })
+    vim.api.nvim_set_keymap('n', 'gpr', '<cmd>lua require("goto-preview").goto_preview_references()<CR>',
+      { noremap = true, silent = true })
 
 
 
@@ -977,16 +957,16 @@ lsp_zero.omnifunc.setup({
 
     --navigator
 
-    require'navigator'.setup({
+    require 'navigator'.setup({
       debug = false, -- log output, set to true and log path: ~/.cache/nvim/gh.log
       -- slowdownd startup and some actions
       width = 0.75, -- max width ratio (number of cols for the floating window) / (window width)
       height = 0.3, -- max list window height, 0.3 by default
       preview_height = 0.35, -- max height of preview windows
-      border = {"╭", "─", "╮", "│", "╯", "─", "╰", "│"}, -- border style, can be one of 'none', 'single', 'double',
+      border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }, -- border style, can be one of 'none', 'single', 'double',
       -- 'shadow', or a list of chars which defines the border
       on_attach = function(client, bufnr)
-      -- your hook
+        -- your hook
       end,
       -- put a on_attach of your own here, e.g
       -- function(client, bufnr)
@@ -996,28 +976,28 @@ lsp_zero.omnifunc.setup({
 
       ts_fold = {
         enable = false,
-        comment_fold = true, -- fold with comment string
-        max_lines_scan_comments = 20, -- only fold when the fold level higher than this value
-        disable_filetypes = {'help', 'guihua', 'text'}, -- list of filetypes which doesn't fold using treesitter
-      },  -- modified version of treesitter folding
-      default_mapping = true,  -- set to false if you will remap every key
-      keymaps = {{key = "gK", func = vim.lsp.declaration, desc = 'declaration'}}, -- a list of key maps
+        comment_fold = true,                                                          -- fold with comment string
+        max_lines_scan_comments = 20,                                                 -- only fold when the fold level higher than this value
+        disable_filetypes = { 'help', 'guihua', 'text' },                             -- list of filetypes which doesn't fold using treesitter
+      },                                                                              -- modified version of treesitter folding
+      default_mapping = true,                                                         -- set to false if you will remap every key
+      keymaps = { { key = "gK", func = vim.lsp.declaration, desc = 'declaration' } }, -- a list of key maps
       -- this kepmap gK will override "gD" mapping function declaration()  in default kepmap
       -- please check mapping.lua for all keymaps
       -- rule of overriding: if func and mode ('n' by default) is same
       -- the key will be overridden
-      treesitter_analysis = true, -- treesitter variable context
-      treesitter_navigation = true, -- bool|table false: use lsp to navigate between symbol ']r/[r', table: a list of
+      treesitter_analysis = true,          -- treesitter variable context
+      treesitter_navigation = true,        -- bool|table false: use lsp to navigate between symbol ']r/[r', table: a list of
       --lang using TS navigation
-      treesitter_analysis_max_num = 100, -- how many items to run treesitter analysis
+      treesitter_analysis_max_num = 100,   -- how many items to run treesitter analysis
       treesitter_analysis_condense = true, -- condense form for treesitter analysis
       -- this value prevent slow in large projects, e.g. found 100000 reference in a project
-      transparency = 50, -- 0 ~ 100 blur the main window, 100: fully transparent, 0: opaque,  set to nil or 100 to disable it
+      transparency = 50,                   -- 0 ~ 100 blur the main window, 100: fully transparent, 0: opaque,  set to nil or 100 to disable it
 
-      lsp_signature_help = true, -- if you would like to hook ray-x/lsp_signature plugin in navigator
+      lsp_signature_help = true,           -- if you would like to hook ray-x/lsp_signature plugin in navigator
       -- setup here. if it is nil, navigator will not init signature help
-      signature_help_cfg = nil, -- if you would like to init ray-x/lsp_signature plugin in navigator, and pass in your own config to signature help
-      icons = { -- refer to lua/navigator.lua for more icons config
+      signature_help_cfg = nil,            -- if you would like to init ray-x/lsp_signature plugin in navigator, and pass in your own config to signature help
+      icons = {                            -- refer to lua/navigator.lua for more icons config
         -- requires nerd fonts or nvim-web-devicons
         icons = true,
         -- Code action
@@ -1026,29 +1006,29 @@ lsp_zero.omnifunc.setup({
         diagnostic_head = '🐛',
         diagnostic_head_severity_1 = "🈲",
         fold = {
-          prefix = '⚡',  -- icon to show before the folding need to be 2 spaces in display width
-          separator = '',  -- e.g. shows   3 lines 
+          prefix = '⚡', -- icon to show before the folding need to be 2 spaces in display width
+          separator = '', -- e.g. shows   3 lines 
         },
       },
-      mason = false, -- set to true if you would like use the lsp installed by williamboman/mason
+      mason = false,   -- set to true if you would like use the lsp installed by williamboman/mason
       lsp = {
-        enable = true,  -- skip lsp setup, and only use treesitter in navigator.
+        enable = true, -- skip lsp setup, and only use treesitter in navigator.
         -- Use this if you are not using LSP servers, and only want to enable treesitter support.
         -- If you only want to prevent navigator from touching your LSP server configs,
         -- use `disable_lsp = "all"` instead.
         -- If disabled, make sure add require('navigator.lspclient.mapping').setup({bufnr=bufnr, client=client}) in your
         -- own on_attach
-        code_action = {enable = true, sign = true, sign_priority = 40, virtual_text = true},
-        code_lens_action = {enable = true, sign = true, sign_priority = 40, virtual_text = true},
+        code_action = { enable = true, sign = true, sign_priority = 40, virtual_text = true },
+        code_lens_action = { enable = true, sign = true, sign_priority = 40, virtual_text = true },
         document_highlight = true, -- LSP reference highlight,
         -- it might already supported by you setup, e.g. LunarVim
-        format_on_save = true, -- {true|false} set to false to disasble lsp code format on save (if you are using prettier/efm/formater etc)
+        format_on_save = true,     -- {true|false} set to false to disasble lsp code format on save (if you are using prettier/efm/formater etc)
         -- table: {enable = {'lua', 'go'}, disable = {'javascript', 'typescript'}} to enable/disable specific language
         -- enable: a whitelist of language that will be formatted on save
         -- disable: a blacklist of language that will not be formatted on save
         -- function: function(bufnr) return true end to enable/disable lsp format on save
-        format_options = {async=false}, -- async: disable by default, the option used in vim.lsp.buf.format({async={true|false}, name = 'xxx'})
-        disable_format_cap = {"sqlls", "lua_ls", "gopls"},  -- a list of lsp disable format capacity (e.g. if you using efm or vim-codeformat etc), empty {} by default
+        format_options = { async = false },                  -- async: disable by default, the option used in vim.lsp.buf.format({async={true|false}, name = 'xxx'})
+        disable_format_cap = { "sqlls", "lua_ls", "gopls" }, -- a list of lsp disable format capacity (e.g. if you using efm or vim-codeformat etc), empty {} by default
         -- If you using null-ls and want null-ls format your code
         -- you should disable all other lsp and allow only null-ls.
         -- disable_lsp = {'pylsd', 'sqlls'},  -- prevents navigator from setting up this list of servers.
@@ -1060,7 +1040,7 @@ lsp_zero.omnifunc.setup({
         -- default value: {}
         diagnostic = {
           underline = true,
-          virtual_text = true, -- show virtual for diagnostic message
+          virtual_text = true,      -- show virtual for diagnostic message
           update_in_insert = false, -- update diagnostic message in insert mode
           float = {                 -- setup for floating windows style
             focusable = false,
@@ -1087,17 +1067,17 @@ lsp_zero.omnifunc.setup({
             },
           },
 
-          diagnostic_scrollbar_sign = {'▃', '▆', '█'}, -- experimental:  diagnostic status in scroll bar area; set to false to disable the diagnostic sign,
+          diagnostic_scrollbar_sign = { '▃', '▆', '█' }, -- experimental:  diagnostic status in scroll bar area; set to false to disable the diagnostic sign,
           --                for other style, set to {'╍', 'ﮆ'} or {'-', '='}
-          diagnostic_virtual_text = true,  -- show virtual for diagnostic message
+          diagnostic_virtual_text = true, -- show virtual for diagnostic message
           diagnostic_update_in_insert = false, -- update diagnostic message in insert mode
           display_diagnostic_qf = true, -- always show quickfix if there are diagnostic errors, set to false if you want to ignore it
           -- set to 'trouble' to show diagnostcs in Trouble
           tsserver = {
-            filetypes = {'typescript'} -- disable javascript etc,
-          -- set to {} to disable the lspclient for all filetypes
+            filetypes = { 'typescript' } -- disable javascript etc,
+            -- set to {} to disable the lspclient for all filetypes
           },
-          ctags ={
+          ctags = {
             cmd = 'ctags',
             tagfile = 'tags',
             options = '-R --exclude=.git --exclude=node_modules --exclude=test --exclude=vendor --excmd=number',
@@ -1127,13 +1107,14 @@ lsp_zero.omnifunc.setup({
 
           lua_ls = {
             sumneko_root_path = vim.fn.expand("$HOME") .. "/github/sumneko/lua-language-server",
-            sumneko_binary = vim.fn.expand("$HOME") .. "/github/sumneko/lua-language-server/bin/macOS/lua-language-server",
+            sumneko_binary = vim.fn.expand("$HOME") ..
+                "/github/sumneko/lua-language-server/bin/macOS/lua-language-server",
           },
-          servers = {'cmake', 'ltex'}, -- by default empty, and it should load all LSP clients available based on filetype
-        -- but if you want navigator load  e.g. `cmake` and `ltex` for you , you
-        -- can put them in the `servers` list and navigator will auto load them.
-        -- you could still specify the custom config  like this
-        -- cmake = {filetypes = {'cmake', 'makefile'}, single_file_support = false},
+          servers = { 'cmake', 'ltex' }, -- by default empty, and it should load all LSP clients available based on filetype
+          -- but if you want navigator load  e.g. `cmake` and `ltex` for you , you
+          -- can put them in the `servers` list and navigator will auto load them.
+          -- you could still specify the custom config  like this
+          -- cmake = {filetypes = {'cmake', 'makefile'}, single_file_support = false},
         }
       }
     })
@@ -1161,7 +1142,7 @@ lsp_zero.omnifunc.setup({
       fold_markers = { '', '' },
       wrap = false,
       keymaps = { -- These keymaps can be a string or a table for multiple keys
-        close = {"<Esc>", "q"},
+        close = { "<Esc>", "q" },
         goto_location = "<Cr>",
         focus_location = "o",
         hover_symbol = "<C-space>",
@@ -1486,7 +1467,7 @@ lsp_zero.omnifunc.setup({
 
       -- Set this function to override the highlight groups for certain symbols
       get_highlight = function(symbol, is_icon, is_collapsed)
-      -- return "MyHighlight" .. symbol.kind
+        -- return "MyHighlight" .. symbol.kind
       end,
 
       -- Options for opening aerial in a floating win
@@ -1557,7 +1538,7 @@ lsp_zero.omnifunc.setup({
         -- Clients with higher (larger) priority will be used before those with lower priority.
         -- Set to -1 to never use the client.
         priority = {
-        -- pyright = 10,
+          -- pyright = 10,
         },
       },
 
@@ -1592,12 +1573,12 @@ lsp_zero.omnifunc.setup({
 
     navbuddy.setup {
       window = {
-        border = "single",  -- "rounded", "double", "solid", "none"
+        border = "single", -- "rounded", "double", "solid", "none"
         -- or an array with eight chars building up the border in a clockwise fashion
         -- starting with the top-left corner. eg: { "╔", "═" ,"╗", "║", "╝", "═", "╚", "║" }.
-        size = "60%",       -- Or table format example: { height = "40%", width = "100%"}
-        position = "50%",   -- Or table format example: { row = "100%", col = "0%"}
-        scrolloff = nil,    -- scrolloff value within navbuddy window
+        size = "60%",     -- Or table format example: { height = "40%", width = "100%"}
+        position = "50%", -- Or table format example: { row = "100%", col = "0%"}
+        scrolloff = nil,  -- scrolloff value within navbuddy window
         sections = {
           left = {
             size = "20%",
@@ -1611,8 +1592,8 @@ lsp_zero.omnifunc.setup({
             -- No size option for right most section. It fills to
             -- remaining area.
             border = nil,
-            preview = "leaf",  -- Right section can show previews too.
-          -- Options: "leaf", "always" or "never"
+            preview = "leaf", -- Right section can show previews too.
+            -- Options: "leaf", "always" or "never"
           }
         },
       },
@@ -1652,12 +1633,12 @@ lsp_zero.omnifunc.setup({
         Operator      = "󰆕 ",
         TypeParameter = "󰊄 ",
       },
-      use_default_mappings = true,            -- If set to false, only mappings set
+      use_default_mappings = true, -- If set to false, only mappings set
       -- by user are set. Else default
       -- mappings are used for keys
       -- that are not set by user
       mappings = {
-        ["<esc>"] = actions.close(),        -- Close and cursor to original location
+        ["<esc>"] = actions.close(), -- Close and cursor to original location
         ["q"] = actions.close(),
 
         ["j"] = actions.next_sibling(),     -- down
@@ -1691,37 +1672,37 @@ lsp_zero.omnifunc.setup({
         ["<enter>"] = actions.select(),     -- Goto selected symbol
         ["o"] = actions.select(),
 
-        ["J"] = actions.move_down(),        -- Move focused node down
-        ["K"] = actions.move_up(),          -- Move focused node up
+        ["J"] = actions.move_down(),      -- Move focused node down
+        ["K"] = actions.move_up(),        -- Move focused node up
 
-        ["s"] = actions.toggle_preview(),   -- Show preview of current node
+        ["s"] = actions.toggle_preview(), -- Show preview of current node
 
-        ["<C-v>"] = actions.vsplit(),       -- Open selected node in a vertical split
-        ["<C-s>"] = actions.hsplit(),       -- Open selected node in a horizontal split
+        ["<C-v>"] = actions.vsplit(),     -- Open selected node in a vertical split
+        ["<C-s>"] = actions.hsplit(),     -- Open selected node in a horizontal split
 
-        ["t"] = actions.telescope({         -- Fuzzy finder at current level.
+        ["t"] = actions.telescope({       -- Fuzzy finder at current level.
           layout_config = {               -- All options that can be
-            height = 0.60,              -- passed to telescope.nvim's
-            width = 0.60,               -- default can be passed here.
+            height = 0.60,                -- passed to telescope.nvim's
+            width = 0.60,                 -- default can be passed here.
             prompt_position = "top",
             preview_width = 0.50
           },
           layout_strategy = "horizontal"
         }),
 
-        ["g?"] = actions.help(),            -- Open mappings help window
+        ["g?"] = actions.help(), -- Open mappings help window
       },
       lsp = {
-        auto_attach = false,   -- If set to true, you don't need to manually use attach function
-        preference = nil,      -- list of lsp server names in order of preference
+        auto_attach = false, -- If set to true, you don't need to manually use attach function
+        preference = nil,    -- list of lsp server names in order of preference
       },
       source_buffer = {
-        follow_node = true,    -- Keep the current node in focus on the source buffer
-        highlight = true,      -- Highlight the currently focused node
-        reorient = "smart",    -- "smart", "top", "mid" or "none"
-        scrolloff = nil        -- scrolloff value when navbuddy is open
+        follow_node = true,  -- Keep the current node in focus on the source buffer
+        highlight = true,    -- Highlight the currently focused node
+        reorient = "smart",  -- "smart", "top", "mid" or "none"
+        scrolloff = nil      -- scrolloff value when navbuddy is open
       },
-      custom_hl_group = nil,     -- "Visual" or any other hl group to use instead of inverted colors
+      custom_hl_group = nil, -- "Visual" or any other hl group to use instead of inverted colors
     }
 
 
@@ -1739,9 +1720,9 @@ lsp_zero.omnifunc.setup({
       -- priority list of external command to highlight diff
       -- disabled by defalt, must be set by yourself
       highlight_command = {
-      -- require("actions-preview.highlight").delta(),
-      -- require("actions-preview.highlight").diff_so_fancy(),
-      -- require("actions-preview.highlight").diff_highlight(),
+        -- require("actions-preview.highlight").delta(),
+        -- require("actions-preview.highlight").diff_so_fancy(),
+        -- require("actions-preview.highlight").diff_highlight(),
       },
 
       -- priority list of preferred backend
@@ -1838,11 +1819,11 @@ lsp_zero.omnifunc.setup({
         hl.commands({
           { cmd = "command-to-diff-highlight" },
           -- `optional` can be used to define that the command is optional.
-          { cmd = "less -R", optional = true },
+          { cmd = "less -R",                  optional = true },
         }),
         -- If you use optional `less -R` (or similar command), you can also use `hl.with_pager`.
         hl.with_pager("command-to-diff-highlight"),
-      -- hl.with_pager("command-to-diff-highlight", "custom-pager"),
+        -- hl.with_pager("command-to-diff-highlight", "custom-pager"),
       },
     }
     require("actions-preview").setup {
@@ -1874,44 +1855,44 @@ lsp_zero.omnifunc.setup({
           ignore_done_already = false,  -- Ignore new tasks that are already complete
           ignore_empty_message = false, -- Ignore new tasks that don't contain a message
           clear_on_detach =             -- Clear notification group when LSP server detaches
-          function(client_id)
-            local client = vim.lsp.get_client_by_id(client_id)
-            return client and client.name or nil
-          end,
-          notification_group =          -- How to get a progress message's notification group key
-          function(msg) return msg.lsp_client.name end,
-          ignore = {},                  -- List of LSP servers to ignore
+              function(client_id)
+                local client = vim.lsp.get_client_by_id(client_id)
+                return client and client.name or nil
+              end,
+          notification_group = -- How to get a progress message's notification group key
+              function(msg) return msg.lsp_client.name end,
+          ignore = {},         -- List of LSP servers to ignore
 
           -- Options related to how LSP progress messages are displayed as notifications
           display = {
-            render_limit = 16,          -- How many LSP messages to show at once
-            done_ttl = 3,               -- How long a message should persist after completion
-            done_icon = "✔",            -- Icon shown when all LSP progress tasks are complete
-            done_style = "Constant",    -- Highlight group for completed LSP tasks
-            progress_ttl = math.huge,   -- How long a message should persist when in progress
-            progress_icon =             -- Icon shown when LSP progress tasks are in progress
+            render_limit = 16, -- How many LSP messages to show at once
+            done_ttl = 3, -- How long a message should persist after completion
+            done_icon = "✔", -- Icon shown when all LSP progress tasks are complete
+            done_style = "Constant", -- Highlight group for completed LSP tasks
+            progress_ttl = math.huge, -- How long a message should persist when in progress
+            progress_icon = -- Icon shown when LSP progress tasks are in progress
             { pattern = "dots", period = 1 },
-            progress_style =            -- Highlight group for in-progress LSP tasks
+            progress_style = -- Highlight group for in-progress LSP tasks
             "WarningMsg",
-            group_style = "Title",      -- Highlight group for group name (LSP server name)
-            icon_style = "Question",    -- Highlight group for group icons
-            priority = 30,              -- Ordering priority for LSP notification group
-            skip_history = true,        -- Whether progress notifications should be omitted from history
-            format_message =            -- How to format a progress message
-            require("fidget.progress.display").default_format_message,
-            format_annote =             -- How to format a progress annotation
-            function(msg) return msg.title end,
-            format_group_name =         -- How to format a progress notification group's name
-            function(group) return tostring(group) end,
-            overrides = {               -- Override options from the default notification config
+            group_style = "Title", -- Highlight group for group name (LSP server name)
+            icon_style = "Question", -- Highlight group for group icons
+            priority = 30, -- Ordering priority for LSP notification group
+            skip_history = true, -- Whether progress notifications should be omitted from history
+            format_message = -- How to format a progress message
+                require("fidget.progress.display").default_format_message,
+            format_annote = -- How to format a progress annotation
+                function(msg) return msg.title end,
+            format_group_name = -- How to format a progress notification group's name
+                function(group) return tostring(group) end,
+            overrides = { -- Override options from the default notification config
               rust_analyzer = { name = "rust-analyzer" },
             },
           },
 
           -- Options related to Neovim's built-in LSP client
           lsp = {
-            progress_ringbuf_size = 0,  -- Configure the nvim's LSP progress ring buffer size
-            log_handler = false,        -- Log `$/progress` handler invocations (for debugging)
+            progress_ringbuf_size = 0, -- Configure the nvim's LSP progress ring buffer size
+            log_handler = false,       -- Log `$/progress` handler invocations (for debugging)
           },
         },
 
@@ -1924,57 +1905,57 @@ lsp_zero.omnifunc.setup({
           configs =                     -- How to configure notification groups when instantiated
           { default = require("fidget.notification").default_config },
           redirect =                    -- Conditionally redirect notifications to another backend
-          function(msg, level, opts)
-            if opts and opts.on_open then
-              return require("fidget.integration.nvim-notify").delegate(msg, level, opts)
-            end
-          end,
+              function(msg, level, opts)
+                if opts and opts.on_open then
+                  return require("fidget.integration.nvim-notify").delegate(msg, level, opts)
+                end
+              end,
 
           -- Options related to how notifications are rendered as text
           view = {
-            stack_upwards = true,       -- Display notification items from bottom to top
-            icon_separator = " ",       -- Separator between group name and icon
-            group_separator = "---",    -- Separator between notification groups
-            group_separator_hl =        -- Highlight group used for group separator
+            stack_upwards = true,    -- Display notification items from bottom to top
+            icon_separator = " ",    -- Separator between group name and icon
+            group_separator = "---", -- Separator between notification groups
+            group_separator_hl =     -- Highlight group used for group separator
             "Comment",
-            render_message =            -- How to render notification messages
-            function(msg, cnt)
-              return cnt == 1 and msg or string.format("(%dx) %s", cnt, msg)
-            end,
+            render_message =         -- How to render notification messages
+                function(msg, cnt)
+                  return cnt == 1 and msg or string.format("(%dx) %s", cnt, msg)
+                end,
           },
 
           -- Options related to the notification window and buffer
           window = {
-            normal_hl = "Comment",      -- Base highlight group in the notification window
-            winblend = 100,             -- Background color opacity in the notification window
-            border = "none",            -- Border around the notification window
-            zindex = 45,                -- Stacking priority of the notification window
-            max_width = 0,              -- Maximum width of the notification window
-            max_height = 0,             -- Maximum height of the notification window
-            x_padding = 1,              -- Padding from right edge of window boundary
-            y_padding = 0,              -- Padding from bottom edge of window boundary
-            align = "bottom",           -- How to align the notification window
-            relative = "editor",        -- What the notification window position is relative to
+            normal_hl = "Comment", -- Base highlight group in the notification window
+            winblend = 100,        -- Background color opacity in the notification window
+            border = "none",       -- Border around the notification window
+            zindex = 45,           -- Stacking priority of the notification window
+            max_width = 0,         -- Maximum width of the notification window
+            max_height = 0,        -- Maximum height of the notification window
+            x_padding = 1,         -- Padding from right edge of window boundary
+            y_padding = 0,         -- Padding from bottom edge of window boundary
+            align = "bottom",      -- How to align the notification window
+            relative = "editor",   -- What the notification window position is relative to
           },
         },
 
         -- Options related to integrating with other plugins
         integration = {
           ["nvim-tree"] = {
-            enable = true,              -- Integrate with nvim-tree/nvim-tree.lua (if installed)
+            enable = true, -- Integrate with nvim-tree/nvim-tree.lua (if installed)
           },
           ["xcodebuild-nvim"] = {
-            enable = true,              -- Integrate with wojciech-kulik/xcodebuild.nvim (if installed)
+            enable = true, -- Integrate with wojciech-kulik/xcodebuild.nvim (if installed)
           },
         },
 
         -- Options related to logging
         logger = {
-          level = vim.log.levels.WARN,  -- Minimum logging level
-          max_size = 10000,             -- Maximum log file size, in KB
-          float_precision = 0.01,       -- Limit the number of decimals displayed for floats
-          path =                        -- Where Fidget writes its logs to
-          string.format("%s/fidget.nvim.log", vim.fn.stdpath("cache")),
+          level = vim.log.levels.WARN, -- Minimum logging level
+          max_size = 10000,            -- Maximum log file size, in KB
+          float_precision = 0.01,      -- Limit the number of decimals displayed for floats
+          path =                       -- Where Fidget writes its logs to
+              string.format("%s/fidget.nvim.log", vim.fn.stdpath("cache")),
         },
       }
     )
@@ -2014,19 +1995,19 @@ lsp_zero.omnifunc.setup({
       },
       list = {
         position = 'right', -- Position of the list window 'left'|'right'
-        width = 0.33, -- 33% width relative to the active window, min 0.1, max 0.5
+        width = 0.33,       -- 33% width relative to the active window, min 0.1, max 0.5
       },
-      theme = { -- This feature might not work properly in nvim-0.7.2
-        enable = true, -- Will generate colors for the plugin based on your current colorscheme
-        mode = 'auto', -- 'brighten'|'darken'|'auto', 'auto' will set mode based on the brightness of your colorscheme
+      theme = {             -- This feature might not work properly in nvim-0.7.2
+        enable = true,      -- Will generate colors for the plugin based on your current colorscheme
+        mode = 'auto',      -- 'brighten'|'darken'|'auto', 'auto' will set mode based on the brightness of your colorscheme
       },
       mappings = {
         list = {
-          ['j'] = actions.next, -- Bring the cursor to the next item in the list
+          ['j'] = actions.next,     -- Bring the cursor to the next item in the list
           ['k'] = actions.previous, -- Bring the cursor to the previous item in the list
           ['<Down>'] = actions.next,
           ['<Up>'] = actions.previous,
-          ['<Tab>'] = actions.next_location, -- Bring the cursor to the next location skipping groups in the list
+          ['<Tab>'] = actions.next_location,       -- Bring the cursor to the next location skipping groups in the list
           ['<S-Tab>'] = actions.previous_location, -- Bring the cursor to the previous location skipping groups in the list
           ['<C-u>'] = actions.preview_scroll_win(5),
           ['<C-d>'] = actions.preview_scroll_win(-5),
@@ -2042,7 +2023,7 @@ lsp_zero.omnifunc.setup({
           ['Q'] = actions.close,
           ['<Esc>'] = actions.close,
           ['<C-q>'] = actions.quickfix,
-        -- ['<Esc>'] = false -- disable a mapping
+          -- ['<Esc>'] = false -- disable a mapping
         },
         preview = {
           ['Q'] = actions.close,
@@ -2062,7 +2043,7 @@ lsp_zero.omnifunc.setup({
         icon = '│',
       },
       winbar = {
-        enable = true, -- Available strating from nvim-0.8+
+        enable = true,       -- Available strating from nvim-0.8+
       },
       use_trouble_qf = false -- Quickfix action will open trouble.nvim instead of built-in quickfix list window
     })
@@ -2110,9 +2091,9 @@ lsp_zero.omnifunc.setup({
           local builder = {}
           for _, cli in ipairs(lsp_clients) do
             if
-              type(cli) == "table"
-              and type(cli.name) == "string"
-              and string.len(cli.name) > 0
+                type(cli) == "table"
+                and type(cli.name) == "string"
+                and string.len(cli.name) > 0
             then
               if messages_map[cli.name] then
                 table.insert(builder, stringify(cli.name, messages_map[cli.name]))
@@ -2290,7 +2271,7 @@ lsp_zero.omnifunc.setup({
       },
     }
 
-    require("mason").setup({DEFAULT_SETTINGS})
+    require("mason").setup({ DEFAULT_SETTINGS })
 
 
 
@@ -2311,36 +2292,36 @@ lsp_zero.omnifunc.setup({
       action_keys = { -- key mappings for actions in the trouble list
         -- map to {} to remove a mapping, for example:
         -- close = {},
-        close = "q", -- close the list
-        cancel = "<esc>", -- cancel the preview and get back to your last window / buffer / cursor
-        refresh = "r", -- manually refresh
-        jump = { "<cr>", "<tab>", "<2-leftmouse>" }, -- jump to the diagnostic or open / close folds
-        open_split = { "<c-x>" }, -- open buffer in new split
-        open_vsplit = { "<c-v>" }, -- open buffer in new vsplit
-        open_tab = { "<c-t>" }, -- open buffer in new tab
-        jump_close = {"o"}, -- jump to the diagnostic and close the list
-        toggle_mode = "m", -- toggle between "workspace" and "document" diagnostics mode
-        switch_severity = "s", -- switch "diagnostics" severity filter level to HINT / INFO / WARN / ERROR
-        toggle_preview = "P", -- toggle auto_preview
-        hover = "K", -- opens a small popup with the full multiline message
-        preview = "p", -- preview the diagnostic location
-        open_code_href = "c", -- if present, open a URI with more information about the diagnostic error
-        close_folds = {"zM", "zm"}, -- close all folds
-        open_folds = {"zR", "zr"}, -- open all folds
-        toggle_fold = {"zA", "za"}, -- toggle fold of current file
-        previous = "k", -- previous item
-        next = "j", -- next item
-        help = "?", -- help menu
+        close = "q",                                                                        -- close the list
+        cancel = "<esc>",                                                                   -- cancel the preview and get back to your last window / buffer / cursor
+        refresh = "r",                                                                      -- manually refresh
+        jump = { "<cr>", "<tab>", "<2-leftmouse>" },                                        -- jump to the diagnostic or open / close folds
+        open_split = { "<c-x>" },                                                           -- open buffer in new split
+        open_vsplit = { "<c-v>" },                                                          -- open buffer in new vsplit
+        open_tab = { "<c-t>" },                                                             -- open buffer in new tab
+        jump_close = { "o" },                                                               -- jump to the diagnostic and close the list
+        toggle_mode = "m",                                                                  -- toggle between "workspace" and "document" diagnostics mode
+        switch_severity = "s",                                                              -- switch "diagnostics" severity filter level to HINT / INFO / WARN / ERROR
+        toggle_preview = "P",                                                               -- toggle auto_preview
+        hover = "K",                                                                        -- opens a small popup with the full multiline message
+        preview = "p",                                                                      -- preview the diagnostic location
+        open_code_href = "c",                                                               -- if present, open a URI with more information about the diagnostic error
+        close_folds = { "zM", "zm" },                                                       -- close all folds
+        open_folds = { "zR", "zr" },                                                        -- open all folds
+        toggle_fold = { "zA", "za" },                                                       -- toggle fold of current file
+        previous = "k",                                                                     -- previous item
+        next = "j",                                                                         -- next item
+        help = "?",                                                                         -- help menu
       },
-      multiline = true, -- render multi-line messages
-      indent_lines = true, -- add an indent guide below the fold icons
-      win_config = { border = "single" }, -- window configuration for floating windows. See |nvim_open_win()|.
-      auto_open = false, -- automatically open the list when you have diagnostics
-      auto_close = false, -- automatically close the list when you have no diagnostics
-      auto_preview = true, -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
-      auto_fold = false, -- automatically fold a file trouble list at creation
-      auto_jump = {"lsp_definitions"}, -- for the given modes, automatically jump if there is only a single result
-      include_declaration = { "lsp_references", "lsp_implementations", "lsp_definitions"  }, -- for the given modes, include the declaration of the current symbol in the results
+      multiline = true,                                                                     -- render multi-line messages
+      indent_lines = true,                                                                  -- add an indent guide below the fold icons
+      win_config = { border = "single" },                                                   -- window configuration for floating windows. See |nvim_open_win()|.
+      auto_open = false,                                                                    -- automatically open the list when you have diagnostics
+      auto_close = false,                                                                   -- automatically close the list when you have no diagnostics
+      auto_preview = true,                                                                  -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
+      auto_fold = false,                                                                    -- automatically fold a file trouble list at creation
+      auto_jump = { "lsp_definitions" },                                                    -- for the given modes, automatically jump if there is only a single result
+      include_declaration = { "lsp_references", "lsp_implementations", "lsp_definitions" }, -- for the given modes, include the declaration of the current symbol in the results
       signs = {
         -- icons / text used for a diagnostic
         error = "",
@@ -2393,21 +2374,21 @@ lsp_zero.omnifunc.setup({
 
     require("nvim-autopairs").setup {
       disable_filetype = { "TelescopePrompt", "spectre_panel" },
-      disable_in_macro = true , -- disable when recording or executing a macro
-      disable_in_visualblock = false ,-- disable when insert after visual block mode
+      disable_in_macro = true,        -- disable when recording or executing a macro
+      disable_in_visualblock = false, -- disable when insert after visual block mode
       disable_in_replace_mode = true,
       ignored_next_char = [=[[%w%%%'%[%"%.%`%$]]=],
       enable_moveright = true,
-      enable_afterquote = true ,-- add bracket pairs after quote
-      enable_check_bracket_line = true , --- check bracket in same line
-      enable_bracket_in_quote = true ,--
-      enable_abbr = false, -- trigger abbreviation
-      break_undo = true, -- switch for basic rule break undo sequence
+      enable_afterquote = true,         -- add bracket pairs after quote
+      enable_check_bracket_line = true, --- check bracket in same line
+      enable_bracket_in_quote = true,   --
+      enable_abbr = false,              -- trigger abbreviation
+      break_undo = true,                -- switch for basic rule break undo sequence
       check_ts = false,
       map_cr = true,
-      map_bs = true ,-- map the <BS> key
-      map_c_h = false ,-- Map the <C-h> key to delete a pair
-      map_c_w = false -- map <c-w> to delete a pair if possible
+      map_bs = true,   -- map the <BS> key
+      map_c_h = false, -- Map the <C-h> key to delete a pair
+      map_c_w = false  -- map <c-w> to delete a pair if possible
     }
     local handlers = require('nvim-autopairs.completion.handlers')
 
@@ -2437,7 +2418,7 @@ lsp_zero.omnifunc.setup({
               ---@param rules table
               ---@param commit_character table<string>
               handler = function(char, item, bufnr, rules, commit_character)
-              -- Your handler function. Inspect with print(vim.inspect{char, item, bufnr, rules, commit_character})
+                -- Your handler function. Inspect with print(vim.inspect{char, item, bufnr, rules, commit_character})
               end
             }
           },
@@ -2450,7 +2431,7 @@ lsp_zero.omnifunc.setup({
     local Rule = require('nvim-autopairs.rule')
     local npairs = require('nvim-autopairs')
 
-    npairs.add_rule(Rule("$$","$$","tex"))
+    npairs.add_rule(Rule("$$", "$$", "tex"))
 
     -- you can use some built-in conditions
 
@@ -2458,31 +2439,31 @@ lsp_zero.omnifunc.setup({
     print(vim.inspect(cond))
 
     npairs.add_rules({
-      Rule("$", "$",{"tex", "latex"})
+        Rule("$", "$", { "tex", "latex" })
         -- don't add a pair if the next character is %
-        :with_pair(cond.not_after_regex("%%"))
+            :with_pair(cond.not_after_regex("%%"))
         -- don't add a pair if  the previous character is xxx
-        :with_pair(cond.not_before_regex("xxx", 3))
+            :with_pair(cond.not_before_regex("xxx", 3))
         -- don't move right when repeat character
-        :with_move(cond.none())
+            :with_move(cond.none())
         -- don't delete if the next character is xx
-        :with_del(cond.not_after_regex("xx"))
+            :with_del(cond.not_after_regex("xx"))
         -- disable adding a newline when you press <cr>
-        :with_cr(cond.none())
-    },
-    -- disable for .vim files, but it work for another filetypes
-    Rule("a","a","-vim")
+            :with_cr(cond.none())
+      },
+      -- disable for .vim files, but it work for another filetypes
+      Rule("a", "a", "-vim")
     )
 
     npairs.add_rules({
-      Rule("$$","$$","tex")
-        :with_pair(function(opts)
-          print(vim.inspect(opts))
-          if opts.line=="aa $$" then
-            -- don't add pair on that line
-            return false
-          end
-        end)
+      Rule("$$", "$$", "tex")
+          :with_pair(function(opts)
+            print(vim.inspect(opts))
+            if opts.line == "aa $$" then
+              -- don't add pair on that line
+              return false
+            end
+          end)
     }
     )
 
@@ -2490,7 +2471,7 @@ lsp_zero.omnifunc.setup({
     -- press u1234 => u1234number
     npairs.add_rules({
       Rule("u%d%d%d%d$", "number", "lua")
-        :use_regex(true)
+          :use_regex(true)
     })
 
 
@@ -2498,11 +2479,11 @@ lsp_zero.omnifunc.setup({
     -- press x1234 => x12341234
     npairs.add_rules({
       Rule("x%d%d%d%d$", "number", "lua")
-        :use_regex(true)
-        :replace_endpair(function(opts)
-          -- print(vim.inspect(opts))
-          return opts.prev_char:sub(#opts.prev_char - 3,#opts.prev_char)
-        end)
+          :use_regex(true)
+          :replace_endpair(function(opts)
+            -- print(vim.inspect(opts))
+            return opts.prev_char:sub(#opts.prev_char - 3, #opts.prev_char)
+          end)
     })
 
 
@@ -2512,18 +2493,18 @@ lsp_zero.omnifunc.setup({
 
     npairs.add_rules({
       Rule("b%d%d%d%d%w$", "", "vim")
-        :use_regex(true,"<tab>")
-        :replace_endpair(function(opts)
-          return
-            opts.prev_char:sub(#opts.prev_char - 4,#opts.prev_char)
-            .."<esc>viwU"
-        end)
+          :use_regex(true, "<tab>")
+          :replace_endpair(function(opts)
+            return
+                opts.prev_char:sub(#opts.prev_char - 4, #opts.prev_char)
+                .. "<esc>viwU"
+          end)
     })
 
     -- you can exclude filetypes
     npairs.add_rule(
-      Rule("$$","$$")
-        :with_pair(cond.not_filetypes({"lua"}))
+      Rule("$$", "$$")
+      :with_pair(cond.not_filetypes({ "lua" }))
     )
     --- check ./lua/nvim-autopairs/rules/basic.lua
 
@@ -2554,7 +2535,7 @@ lsp_zero.omnifunc.setup({
       require("dial.map").manipulate("decrement", "gvisual")
     end)
     local augend = require("dial.augend")
-    require("dial.config").augends:register_group{
+    require("dial.config").augends:register_group {
       default = {
         augend.integer.alias.decimal,
         augend.integer.alias.hex,
@@ -2563,7 +2544,7 @@ lsp_zero.omnifunc.setup({
       typescript = {
         augend.integer.alias.decimal,
         augend.integer.alias.hex,
-        augend.constant.new{ elements = {"let", "const"} },
+        augend.constant.new { elements = { "let", "const" } },
       },
       visual = {
         augend.integer.alias.decimal,
@@ -2575,13 +2556,13 @@ lsp_zero.omnifunc.setup({
     }
 
     -- change augends in VISUAL mode
-    vim.keymap.set("v", "<C-a>", require("dial.map").inc_visual("visual"), {noremap = true})
-    vim.keymap.set("v", "<C-x>", require("dial.map").dec_visual("visual"), {noremap = true})
+    vim.keymap.set("v", "<C-a>", require("dial.map").inc_visual("visual"), { noremap = true })
+    vim.keymap.set("v", "<C-x>", require("dial.map").dec_visual("visual"), { noremap = true })
 
-    require("dial.config").augends:register_group{
+    require("dial.config").augends:register_group {
       default = {
         -- uppercase hex number (0x1A1A, 0xEEFE, etc.)
-        augend.integer.new{
+        augend.integer.new {
           radix = 16,
           prefix = "0x",
           natural = true,
@@ -2590,10 +2571,10 @@ lsp_zero.omnifunc.setup({
       },
     }
 
-    require("dial.config").augends:register_group{
+    require("dial.config").augends:register_group {
       default = {
         -- date with format `yyyy/mm/dd`
-        augend.date.new{
+        augend.date.new {
           pattern = "%Y/%m/%d",
           default_kind = "day",
           -- if true, it does not match dates which does not exist, such as 2022/05/32
@@ -2604,26 +2585,26 @@ lsp_zero.omnifunc.setup({
       },
     }
 
-    require("dial.config").augends:register_group{
+    require("dial.config").augends:register_group {
       default = {
         -- uppercase hex number (0x1A1A, 0xEEFE, etc.)
-        augend.hexcolor.new{
+        augend.hexcolor.new {
           case = "lower",
         },
       },
     }
 
 
-    require("dial.config").augends:register_group{
+    require("dial.config").augends:register_group {
       default = {
         -- uppercase hex number (0x1A1A, 0xEEFE, etc.)
-        augend.constant.new{
-          elements = {"and", "or"},
-          word = true, -- if false, "sand" is incremented into "sor", "doctor" into "doctand", etc.
-          cyclic = true,  -- "or" is incremented into "and".
+        augend.constant.new {
+          elements = { "and", "or" },
+          word = true,   -- if false, "sand" is incremented into "sor", "doctor" into "doctand", etc.
+          cyclic = true, -- "or" is incremented into "and".
         },
-        augend.constant.new{
-          elements = {"&&", "||"},
+        augend.constant.new {
+          elements = { "&&", "||" },
           word = false,
           cyclic = true,
         },
@@ -2637,8 +2618,8 @@ lsp_zero.omnifunc.setup({
     require('nvim-ts-autotag').setup({
       opts = {
         -- Defaults
-        enable_close = true, -- Auto close tags
-        enable_rename = true, -- Auto rename pairs of tags
+        enable_close = true,          -- Auto close tags
+        enable_rename = true,         -- Auto rename pairs of tags
         enable_close_on_slash = false -- Auto close on trailing </
       },
       -- Also override individual filetype configs, these take priority.
@@ -2735,252 +2716,251 @@ lsp_zero.omnifunc.setup({
 
 
 
---conform
-require("conform").setup({
-  -- Map of filetype to formatters
-  formatters_by_ft = {
-    lua = { "stylua" },
-    -- Conform will run multiple formatters sequentially
-    go = { "goimports", "gofmt" },
-    -- Use a sub-list to run only the first available formatter
-    javascript = { { "prettierd", "prettier" } },
-    -- You can use a function here to determine the formatters dynamically
-    python = function(bufnr)
-      if require("conform").get_formatter_info("ruff_format", bufnr).available then
-        return { "ruff_format" }
-      else
-        return { "isort", "black" }
-      end
-    end,
-    -- Use the "*" filetype to run formatters on all filetypes.
-    ["*"] = { "codespell" },
-    -- Use the "_" filetype to run formatters on filetypes that don't
-    -- have other formatters configured.
-    ["_"] = { "trim_whitespace" },
-  },
-  -- If this is set, Conform will run the formatter on save.
-  -- It will pass the table to conform.format().
-  -- This can also be a function that returns the table.
-  format_on_save = {
-    -- I recommend these options. See :help conform.format for details.
-    lsp_fallback = true,
-    timeout_ms = 500,
-  },
-  -- If this is set, Conform will run the formatter asynchronously after save.
-  -- It will pass the table to conform.format().
-  -- This can also be a function that returns the table.
-  format_after_save = {
-    lsp_fallback = true,
-  },
-  -- Set the log level. Use `:ConformInfo` to see the location of the log file.
-  log_level = vim.log.levels.ERROR,
-  -- Conform will notify you when a formatter errors
-  notify_on_error = true,
-  -- Custom formatters and overrides for built-in formatters
-  formatters = {
-    my_formatter = {
-      -- This can be a string or a function that returns a string.
-      -- When defining a new formatter, this is the only field that is required
+    --conform
+    require("conform").setup({
+      -- Map of filetype to formatters
+      formatters_by_ft = {
+        lua = { "stylua" },
+        -- Conform will run multiple formatters sequentially
+        go = { "goimports", "gofmt" },
+        -- Use a sub-list to run only the first available formatter
+        javascript = { { "prettierd", "prettier" } },
+        -- You can use a function here to determine the formatters dynamically
+        python = function(bufnr)
+          if require("conform").get_formatter_info("ruff_format", bufnr).available then
+            return { "ruff_format" }
+          else
+            return { "isort", "black" }
+          end
+        end,
+        -- Use the "*" filetype to run formatters on all filetypes.
+        ["*"] = { "codespell" },
+        -- Use the "_" filetype to run formatters on filetypes that don't
+        -- have other formatters configured.
+        ["_"] = { "trim_whitespace" },
+      },
+      -- If this is set, Conform will run the formatter on save.
+      -- It will pass the table to conform.format().
+      -- This can also be a function that returns the table.
+      format_on_save = {
+        -- I recommend these options. See :help conform.format for details.
+        lsp_fallback = true,
+        timeout_ms = 500,
+      },
+      -- If this is set, Conform will run the formatter asynchronously after save.
+      -- It will pass the table to conform.format().
+      -- This can also be a function that returns the table.
+      format_after_save = {
+        lsp_fallback = true,
+      },
+      -- Set the log level. Use `:ConformInfo` to see the location of the log file.
+      log_level = vim.log.levels.ERROR,
+      -- Conform will notify you when a formatter errors
+      notify_on_error = true,
+      -- Custom formatters and overrides for built-in formatters
+      formatters = {
+        my_formatter = {
+          -- This can be a string or a function that returns a string.
+          -- When defining a new formatter, this is the only field that is required
+          command = "my_cmd",
+          -- A list of strings, or a function that returns a list of strings
+          -- Return a single string instead of a list to run the command in a shell
+          args = { "--stdin-from-filename", "$FILENAME" },
+          -- If the formatter supports range formatting, create the range arguments here
+          range_args = function(self, ctx)
+            return { "--line-start", ctx.range.start[1], "--line-end", ctx.range["end"][1] }
+          end,
+          -- Send file contents to stdin, read new contents from stdout (default true)
+          -- When false, will create a temp file (will appear in "$FILENAME" args). The temp
+          -- file is assumed to be modified in-place by the format command.
+          stdin = true,
+          -- A function that calculates the directory to run the command in
+          cwd = require("conform.util").root_file({ ".editorconfig", "package.json" }),
+          -- When cwd is not found, don't run the formatter (default false)
+          require_cwd = true,
+          -- When stdin=false, use this template to generate the temporary file that gets formatted
+          tmpfile_format = ".conform.$RANDOM.$FILENAME",
+          -- When returns false, the formatter will not be used
+          condition = function(self, ctx)
+            return vim.fs.basename(ctx.filename) ~= "README.md"
+          end,
+          -- Exit codes that indicate success (default { 0 })
+          exit_codes = { 0, 1 },
+          -- Environment variables. This can also be a function that returns a table.
+          env = {
+            VAR = "value",
+          },
+          -- Set to false to disable merging the config with the base definition
+          inherit = true,
+          -- When inherit = true, add these additional arguments to the command.
+          -- This can also be a function, like args
+          prepend_args = { "--use-tabs" },
+        },
+        -- These can also be a function that returns the formatter
+        other_formatter = function(bufnr)
+          return {
+            command = "my_cmd",
+          }
+        end,
+      },
+    })
+
+    -- You can set formatters_by_ft and formatters directly
+    require("conform").formatters_by_ft.lua = { "stylua" }
+    require("conform").formatters.my_formatter = {
       command = "my_cmd",
-      -- A list of strings, or a function that returns a list of strings
-      -- Return a single string instead of a list to run the command in a shell
-      args = { "--stdin-from-filename", "$FILENAME" },
-      -- If the formatter supports range formatting, create the range arguments here
-      range_args = function(self, ctx)
-        return { "--line-start", ctx.range.start[1], "--line-end", ctx.range["end"][1] }
-      end,
-      -- Send file contents to stdin, read new contents from stdout (default true)
-      -- When false, will create a temp file (will appear in "$FILENAME" args). The temp
-      -- file is assumed to be modified in-place by the format command.
-      stdin = true,
-      -- A function that calculates the directory to run the command in
-      cwd = require("conform.util").root_file({ ".editorconfig", "package.json" }),
-      -- When cwd is not found, don't run the formatter (default false)
-      require_cwd = true,
-      -- When stdin=false, use this template to generate the temporary file that gets formatted
-      tmpfile_format = ".conform.$RANDOM.$FILENAME",
-      -- When returns false, the formatter will not be used
-      condition = function(self, ctx)
-        return vim.fs.basename(ctx.filename) ~= "README.md"
-      end,
-      -- Exit codes that indicate success (default { 0 })
-      exit_codes = { 0, 1 },
-      -- Environment variables. This can also be a function that returns a table.
-      env = {
-        VAR = "value",
+    }
+    require("conform").setup({
+      formatters_by_ft = {
+        lua = { "stylua" },
+        -- Conform will run multiple formatters sequentially
+        python = { "isort", "black" },
+        -- Use a sub-list to run only the first available formatter
+        javascript = { { "prettierd", "prettier" } },
       },
-      -- Set to false to disable merging the config with the base definition
-      inherit = true,
-      -- When inherit = true, add these additional arguments to the command.
-      -- This can also be a function, like args
-      prepend_args = { "--use-tabs" },
-    },
-    -- These can also be a function that returns the formatter
-    other_formatter = function(bufnr)
-      return {
-        command = "my_cmd",
-      }
-    end,
-  },
-})
+    })
 
--- You can set formatters_by_ft and formatters directly
-require("conform").formatters_by_ft.lua = { "stylua" }
-require("conform").formatters.my_formatter = {
-  command = "my_cmd",
-}
-require("conform").setup({
-  formatters_by_ft = {
-    lua = { "stylua" },
-    -- Conform will run multiple formatters sequentially
-    python = { "isort", "black" },
-    -- Use a sub-list to run only the first available formatter
-    javascript = { { "prettierd", "prettier" } },
-  },
-})
+    --treesitter
+    require 'nvim-treesitter.configs'.setup {
+      -- A list of parser names, or "all" (the five listed parsers should always be installed)
+      ensure_installed = "community",
 
---treesitter
-require'nvim-treesitter.configs'.setup {
-  -- A list of parser names, or "all" (the five listed parsers should always be installed)
-  ensure_installed = "community",
+      -- Install parsers synchronously (only applied to `ensure_installed`)
+      sync_install = true,
 
-  -- Install parsers synchronously (only applied to `ensure_installed`)
-  sync_install = true,
+      -- Automatically install missing parsers when entering buffer
+      -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+      auto_install = true,
 
-  -- Automatically install missing parsers when entering buffer
-  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-  auto_install = true,
+      -- List of parsers to ignore installing (or "all")
+      -- ignore_install = { "javascript" },
 
-  -- List of parsers to ignore installing (or "all")
-  -- ignore_install = { "javascript" },
+      ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+      -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
 
-  ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-  -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+      highlight = {
+        enable = true,
 
-  highlight = {
-    enable = true,
-
-    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-    -- the name of the parser)
-    -- list of language that will be disabled
-    -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
-    disable = function(lang, buf)
-        local max_filesize = 100 * 1024 -- 100 KB
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
+        -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+        -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+        -- the name of the parser)
+        -- list of language that will be disabled
+        -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+        disable = function(lang, buf)
+          local max_filesize = 100 * 1024 -- 100 KB
+          local ok, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
+          if ok and stats and stats.size > max_filesize then
             return true
-        end
-    end,
+          end
+        end,
 
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
-}
+        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+        -- Using this option may slow down your editor, and you may see some duplicate highlights.
+        -- Instead of true it can also be a list of languages
+        additional_vim_regex_highlighting = false,
+      },
+    }
 
-require'nvim-treesitter.configs'.setup {
-  textobjects = {
-    select = {
-      enable = true,
+    require 'nvim-treesitter.configs'.setup {
+      textobjects = {
+        select = {
+          enable = true,
 
-      -- Automatically jump forward to textobj, similar to targets.vim
-      lookahead = true,
+          -- Automatically jump forward to textobj, similar to targets.vim
+          lookahead = true,
 
-      keymaps = {
-        -- You can use the capture groups defined in textobjects.scm
-        ["af"] = "@function.outer",
-        ["if"] = "@function.inner",
-        ["ac"] = "@class.outer",
-        -- You can optionally set descriptions to the mappings (used in the desc parameter of
-        -- nvim_buf_set_keymap) which plugins like which-key display
-        ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
-        -- You can also use captures from other query groups like `locals.scm`
-        ["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+          keymaps = {
+            -- You can use the capture groups defined in textobjects.scm
+            ["af"] = "@function.outer",
+            ["if"] = "@function.inner",
+            ["ac"] = "@class.outer",
+            -- You can optionally set descriptions to the mappings (used in the desc parameter of
+            -- nvim_buf_set_keymap) which plugins like which-key display
+            ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+            -- You can also use captures from other query groups like `locals.scm`
+            ["as"] = { query = "@scope", query_group = "locals", desc = "Select language scope" },
+          },
+          -- You can choose the select mode (default is charwise 'v')
+          --
+          -- Can also be a function which gets passed a table with the keys
+          -- * query_string: eg '@function.inner'
+          -- * method: eg 'v' or 'o'
+          -- and should return the mode ('v', 'V', or '<c-v>') or a table
+          -- mapping query_strings to modes.
+          selection_modes = {
+            ['@parameter.outer'] = 'v', -- charwise
+            ['@function.outer'] = 'V',  -- linewise
+            ['@class.outer'] = '<c-v>', -- blockwise
+          },
+          -- If you set this to `true` (default is `false`) then any textobject is
+          -- extended to include preceding or succeeding whitespace. Succeeding
+          -- whitespace has priority in order to act similarly to eg the built-in
+          -- `ap`.
+          --
+          -- Can also be a function which gets passed a table with the keys
+          -- * query_string: eg '@function.inner'
+          -- * selection_mode: eg 'v'
+          -- and should return true or false
+          include_surrounding_whitespace = true,
+        },
       },
-      -- You can choose the select mode (default is charwise 'v')
-      --
-      -- Can also be a function which gets passed a table with the keys
-      -- * query_string: eg '@function.inner'
-      -- * method: eg 'v' or 'o'
-      -- and should return the mode ('v', 'V', or '<c-v>') or a table
-      -- mapping query_strings to modes.
-      selection_modes = {
-        ['@parameter.outer'] = 'v', -- charwise
-        ['@function.outer'] = 'V', -- linewise
-        ['@class.outer'] = '<c-v>', -- blockwise
+    }
+    require 'nvim-treesitter.configs'.setup {
+      textobjects = {
+        swap = {
+          enable = true,
+          swap_next = {
+            ["<leader>a"] = "@parameter.inner",
+          },
+          swap_previous = {
+            ["<leader>A"] = "@parameter.inner",
+          },
+        },
       },
-      -- If you set this to `true` (default is `false`) then any textobject is
-      -- extended to include preceding or succeeding whitespace. Succeeding
-      -- whitespace has priority in order to act similarly to eg the built-in
-      -- `ap`.
-      --
-      -- Can also be a function which gets passed a table with the keys
-      -- * query_string: eg '@function.inner'
-      -- * selection_mode: eg 'v'
-      -- and should return true or false
-      include_surrounding_whitespace = true,
-    },
-  },
-}
-require'nvim-treesitter.configs'.setup {
-  textobjects = {
-    swap = {
-      enable = true,
-      swap_next = {
-        ["<leader>a"] = "@parameter.inner",
+    }
+    require 'nvim-treesitter.configs'.setup {
+      textobjects = {
+        move = {
+          enable = true,
+          set_jumps = true, -- whether to set jumps in the jumplist
+          goto_next_start = {
+            ["]m"] = "@function.outer",
+            ["]]"] = { query = "@class.outer", desc = "Next class start" },
+            --
+            -- You can use regex matching (i.e. lua pattern) and/or pass a list in a "query" key to group multiple queires.
+            ["]o"] = "@loop.*",
+            -- ["]o"] = { query = { "@loop.inner", "@loop.outer" } }
+            --
+            -- You can pass a query group to use query from `queries/<lang>/<query_group>.scm file in your runtime path.
+            -- Below example nvim-treesitter's `locals.scm` and `folds.scm`. They also provide highlights.scm and indent.scm.
+            ["]s"] = { query = "@scope", query_group = "locals", desc = "Next scope" },
+            ["]z"] = { query = "@fold", query_group = "folds", desc = "Next fold" },
+          },
+          goto_next_end = {
+            ["]M"] = "@function.outer",
+            ["]["] = "@class.outer",
+          },
+          goto_previous_start = {
+            ["[m"] = "@function.outer",
+            ["[["] = "@class.outer",
+          },
+          goto_previous_end = {
+            ["[M"] = "@function.outer",
+            ["[]"] = "@class.outer",
+          },
+          -- Below will go to either the start or the end, whichever is closer.
+          -- Use if you want more granular movements
+          -- Make it even more gradual by adding multiple queries and regex.
+          goto_next = {
+            ["]d"] = "@conditional.outer",
+          },
+          goto_previous = {
+            ["[d"] = "@conditional.outer",
+          }
+        },
       },
-      swap_previous = {
-        ["<leader>A"] = "@parameter.inner",
-      },
-    },
-  },
-}
-require'nvim-treesitter.configs'.setup {
-  textobjects = {
-    move = {
-      enable = true,
-      set_jumps = true, -- whether to set jumps in the jumplist
-      goto_next_start = {
-        ["]m"] = "@function.outer",
-        ["]]"] = { query = "@class.outer", desc = "Next class start" },
-        --
-        -- You can use regex matching (i.e. lua pattern) and/or pass a list in a "query" key to group multiple queires.
-        ["]o"] = "@loop.*",
-        -- ["]o"] = { query = { "@loop.inner", "@loop.outer" } }
-        --
-        -- You can pass a query group to use query from `queries/<lang>/<query_group>.scm file in your runtime path.
-        -- Below example nvim-treesitter's `locals.scm` and `folds.scm`. They also provide highlights.scm and indent.scm.
-        ["]s"] = { query = "@scope", query_group = "locals", desc = "Next scope" },
-        ["]z"] = { query = "@fold", query_group = "folds", desc = "Next fold" },
-      },
-      goto_next_end = {
-        ["]M"] = "@function.outer",
-        ["]["] = "@class.outer",
-      },
-      goto_previous_start = {
-        ["[m"] = "@function.outer",
-        ["[["] = "@class.outer",
-      },
-      goto_previous_end = {
-        ["[M"] = "@function.outer",
-        ["[]"] = "@class.outer",
-      },
-      -- Below will go to either the start or the end, whichever is closer.
-      -- Use if you want more granular movements
-      -- Make it even more gradual by adding multiple queries and regex.
-      goto_next = {
-        ["]d"] = "@conditional.outer",
-      },
-      goto_previous = {
-        ["[d"] = "@conditional.outer",
-      }
-    },
-  },
-}
-
+    }
   end,
 
 }
